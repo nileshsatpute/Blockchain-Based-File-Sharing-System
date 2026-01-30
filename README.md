@@ -89,6 +89,7 @@ Audit log entry recorded
 Admin can view analytics, logs, and blockchain
 
 ⚙️ Installation & Setup
+
 1️⃣ Clone the Repository
 git clone https://github.com/your-username/blockchain-file-sharing.git
 cd blockchain-file-sharing
@@ -106,22 +107,6 @@ Access the application at:
 
 http://127.0.0.1:5000
 
-📂 Project Structure
-project/
-│
-├── app/
-│   ├── blueprints/
-│   │   ├── admin.py
-│   │   └── user.py
-│   ├── models.py
-│   ├── templates/
-│   └── static/
-│
-├── uploads/
-├── pow_comparison.py
-├── requirements.txt
-├── README.md
-└── run.py
 
 🔮 Future Enhancements
 
@@ -144,8 +129,5 @@ Full-stack web development
 👨‍💻 Author
 
 Nilesh Satpute
-Blockchain-Based Cloud File Sharing System
 
-📜 License
 
-This project is developed for educational purposes only.
