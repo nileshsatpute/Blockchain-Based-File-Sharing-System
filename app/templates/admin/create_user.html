@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+/* Same navbar style for user and admin */
+.user-nav,
+.admin-nav {
+    margin-bottom: 20px;
+    background: #2c3e50;
+    padding: 10px 20px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: flex-start;
+    gap: 15px;
+}
+
+.user-nav a,
+.admin-nav a {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.user-nav a:hover,
+.admin-nav a:hover {
+    text-decoration: underline;
+}
+
+/* Form card styling */
+.form-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    max-width: 500px;
+    margin-top: 20px;
+}
+
+.form-card label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.form-card input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* User list styling */
+.user-list {
+    margin-top: 15px;
+    padding-left: 20px;
+}
+
+.user-list li {
+    padding: 5px 0;
+}
+</style>
+
+<!-- Admin Navigation -->
+<nav class="admin-nav">
+  <a href="{{ url_for('admin.create_user_page') }}">Create User</a>
+  <a href="{{ url_for('admin.change_password_page') }}">Change Password</a>
+  <a href="{{ url_for('admin.all_files_page') }}">All Files</a>
+  <a href="{{ url_for('admin.feedback_page') }}">Feedback</a>
+  <a href="{{ url_for('admin.logs_page') }}">Logs</a>
+  <a href="{{ url_for('admin.chain_page') }}">Blockchain</a>
+  <a href="{{ url_for('admin.analytics_page') }}">Analytics</a>
+</nav>
+
+<h2>Create User</h2>
+<form method="post" action="{{ url_for('admin.create_user') }}" class="form-card">
+  <label>Email</label>
+  <input name="email" required>
+
+  <label>Username</label>
+  <input name="username">
+
+  <label>Password</label>
+  <input type="password" name="password" required>
+
+  <label>Notification Email</label>
+  <input name="notify_email">
+
+  <button class="btn" type="submit">Create</button>
+</form>
+
+<h3>Existing Users</h3>
+<ul class="user-list">
+  {% for u in users %}
+    <li>{{ u.id }} - {{ u.email }} ({{ u.role }})</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

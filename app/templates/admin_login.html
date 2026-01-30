@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="login-container">
+  <div class="login-card">
+    <h2>Admin Login</h2>
+    <form method="post" action="{{ url_for('auth.admin_login') }}">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" placeholder="Enter admin email" required>
+
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" placeholder="Enter admin password" required>
+
+      <button class="btn" type="submit">Login</button>
+    </form>
+  </div>
+</div>
+
+<style>
+/* Center container */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 75vh;
+  padding: 20px;
+  background: #f4f6f8;
+}
+
+/* Card */
+.login-card {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+
+.login-card h2 {
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+/* Labels */
+.login-card label {
+  display: block;
+  text-align: left;
+  margin-bottom: 6px;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Inputs */
+.login-card input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.login-card input:focus {
+  border-color: #2c3e50;
+  outline: none;
+  box-shadow: 0 0 4px rgba(44,62,80,0.3);
+}
+
+/* Button */
+.btn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px;
+  background: #2c3e50;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background: #1a252f;
+}
+</style>
+{% endblock %}

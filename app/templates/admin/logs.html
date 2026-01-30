@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    /* Navbar */
+    .admin-nav {
+        margin-bottom: 20px;
+        background: #2c3e50;
+        padding: 12px 15px;
+        border-radius: 6px;
+        display: flex;
+        justify-content: flex-start;
+    }
+    .admin-nav a {
+        color: #ecf0f1;
+        margin: 0 12px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .admin-nav a:hover {
+        text-decoration: underline;
+    }
+
+    /* Table */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    th, td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+    th {
+        background: #34495e;
+        color: #ecf0f1;
+        font-weight: bold;
+    }
+    tr:hover {
+        background: #f9f9f9;
+    }
+    td {
+        font-size: 14px;
+    }
+</style>
+
+<nav class="admin-nav">
+    <a href="{{ url_for('admin.create_user_page') }}">Create User</a>
+    <a href="{{ url_for('admin.change_password_page') }}">Change Password</a>
+    <a href="{{ url_for('admin.all_files_page') }}">All Files</a>
+    <a href="{{ url_for('admin.feedback_page') }}">Feedback</a>
+    <a href="{{ url_for('admin.logs_page') }}">Logs</a>
+    <a href="{{ url_for('admin.chain_page') }}">Blockchain</a>
+    <a href="{{ url_for('admin.analytics_page') }}">Analytics</a>
+</nav>
+
+<h2>Audit Logs</h2>
+
+<table>
+    <tr>
+        <th>Time</th>
+        <th>Actor</th>
+        <th>Action</th>
+        <th>File</th>
+        <th>Target</th>
+        <th>Details</th>
+    </tr>
+    {% for l in logs %}
+    <tr>
+        <td>{{ l.time }}</td>
+        <td>{{ l.actor }}</td>
+        <td>{{ l.action }}</td>
+        <td>{{ l.file }}</td>
+        <td>{{ l.target }}</td>
+        <td>{{ l.details }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+/* Navbar (same as other admin pages) */
+.admin-nav {
+    margin-bottom: 20px;
+    background: #2c3e50;
+    padding: 10px 20px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: flex-start;
+    gap: 15px;
+}
+
+.admin-nav a {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.admin-nav a:hover {
+    text-decoration: underline;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background: #34495e;
+    color: #ecf0f1;
+}
+
+tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+.btn {
+    background: #3498db;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.btn:hover {
+    background: #2980b9;
+}
+</style>
+
+<!-- Admin Navigation -->
+<nav class="admin-nav">
+  <a href="{{ url_for('admin.create_user_page') }}">Create User</a>
+  <a href="{{ url_for('admin.change_password_page') }}">Change Password</a>
+  <a href="{{ url_for('admin.all_files_page') }}">All Files</a>
+  <a href="{{ url_for('admin.feedback_page') }}">Feedback</a>
+  <a href="{{ url_for('admin.logs_page') }}">Logs</a>
+  <a href="{{ url_for('admin.chain_page') }}">Blockchain</a>
+  <a href="{{ url_for('admin.analytics_page') }}">Analytics</a>
+</nav>
+
+<h2>All Files</h2>
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Filename</th>
+    <th>Owner Email</th>
+    <th>Size (bytes)</th>
+    <th>Download</th>
+  </tr>
+  {% for f in files %}
+  <tr>
+    <td>{{ f.id }}</td>
+    <td>{{ f.filename }}</td>
+    <td>{{ f.owner.email }}</td>
+    <td>{{ f.size_bytes }}</td>
+    <td><a class="btn" href="{{ url_for('admin.admin_download', file_id=f.id) }}">Download</a></td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .admin-nav {
+        margin-bottom: 20px;
+        background: #2c3e50;
+        padding: 10px;
+        border-radius: 6px;
+    }
+    .admin-nav a {
+        color: #ecf0f1;
+        margin: 0 12px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .admin-nav a:hover {
+        text-decoration: underline;
+    }
+
+    h2 {
+        margin-bottom: 15px;
+        color: #2c3e50;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        background: #fff;
+        border-radius: 6px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        background: #34495e;
+        color: #ecf0f1;
+    }
+    tr:hover {
+        background: #f9f9f9;
+    }
+
+    input[name="reply"] {
+        padding: 6px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 180px;
+    }
+
+    .btn.small {
+        padding: 6px 10px;
+        font-size: 13px;
+        border-radius: 4px;
+    }
+</style>
+
+<nav class="admin-nav">
+    <a href="{{ url_for('admin.create_user_page') }}">Create User</a> |
+    <a href="{{ url_for('admin.change_password_page') }}">Change Password</a> |
+    <a href="{{ url_for('admin.all_files_page') }}">All Files</a> |
+    <a href="{{ url_for('admin.feedback_page') }}">Feedback</a> |
+    <a href="{{ url_for('admin.logs_page') }}">Logs</a> |
+    <a href="{{ url_for('admin.chain_page') }}">Blockchain</a>
+    <a href="{{ url_for('admin.analytics_page') }}">Analytics</a>
+</nav>
+
+<h2>Feedback</h2>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>User</th>
+        <th>Subject</th>
+        <th>Message</th>
+        <th>Status</th>
+        <th>Reply</th>
+    </tr>
+    {% for fb in feedbacks %}
+    <tr>
+        <td>{{ fb.id }}</td>
+        <td>{{ (fb.user.username or fb.user.email) if fb.user else 'Unknown' }}</td>
+        <td>{{ fb.subject }}</td>
+        <td>{{ fb.body }}</td>
+        <td>{{ fb.status }}</td>
+        <td>
+            <form method="post" action="{{ url_for('admin.reply_feedback', fb_id=fb.id) }}">
+                <input name="reply" placeholder="Type reply...">
+                <button class="btn small" type="submit">Reply</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

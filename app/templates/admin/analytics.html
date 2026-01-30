@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<nav class="admin-nav">
+  <a href="{{ url_for('admin.create_user_page') }}">Create User</a> |
+  <a href="{{ url_for('admin.change_password_page') }}">Change Password</a> |
+  <a href="{{ url_for('admin.all_files_page') }}">All Files</a> |
+  <a href="{{ url_for('admin.feedback_page') }}">Feedback</a> |
+  <a href="{{ url_for('admin.logs_page') }}">Logs</a> |
+  <a href="{{ url_for('admin.chain_page') }}">Blockchain</a> |
+  <a href="{{ url_for('admin.analytics_page') }}">Analytics</a>
+</nav>
+
+<h2>Audit Dashboard</h2>
+
+<!-- ✅ SAFE JSON DATA (THIS WAS THE ISSUE) -->
+<script id="analytics-data" type="application/json">
+{
+  "uploads": {{ uploads | tojson | safe }},
+  "downloads": {{ downloads | tojson | safe }},
+  "revokes": {{ revokes | tojson | safe }},
+  "shared_per_user": {{ shared_per_user | tojson | safe }},
+  "storage_per_user": {{ storage_per_user | tojson | safe }}
+}
+</script>
+
+<div class="charts">
+  <div class="chart-container">
+    <h3>Uploads / Downloads / Revokes</h3>
+    <canvas id="activityChart"></canvas>
+  </div>
+
+  <div class="chart-container">
+    <h3>Files Shared Per User</h3>
+    <canvas id="shareChart"></canvas>
+  </div>
+
+  <div class="chart-container">
+    <h3>Storage Used Per User (MB)</h3>
+    <canvas id="storageChart"></canvas>
+  </div>
+</div>
+
+<style>
+.admin-nav {
+  margin-bottom: 20px;
+  background: #2c3e50;
+  padding: 10px 20px;
+  border-radius: 6px;
+  display: flex;
+  gap: 15px;
+}
+.admin-nav a {
+  color: #ecf0f1;
+  text-decoration: none;
+  font-weight: bold;
+}
+.admin-nav a:hover { text-decoration: underline; }
+
+.charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.chart-container {
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+canvas {
+  width: 100% !important;
+  height: 300px !important;
+}
+</style>
+
+<!-- ✅ CHART.JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+
+<script>
+const rawData = JSON.parse(
+  document.getElementById("analytics-data").textContent
+);
+
+// ---------- SAFE MAPPERS ----------
+const getDate = r => r.date ?? r[0];
+const getCount = r => r.count ?? r[1];
+
+// ---------- ACTIVITY LINE CHART ----------
+if (rawData.uploads.length) {
+  new Chart(document.getElementById("activityChart"), {
+    type: "line",
+    data: {
+      labels: rawData.uploads.map(getDate),
+      datasets: [
+        {
+          label: "Uploads",
+          data: rawData.uploads.map(getCount),
+          borderWidth: 2,
+          tension: 0.3
+        },
+        {
+          label: "Downloads",
+          data: rawData.downloads.map(getCount),
+          borderWidth: 2,
+          tension: 0.3
+        },
+        {
+          label: "Revokes",
+          data: rawData.revokes.map(getCount),
+          borderWidth: 2,
+          tension: 0.3
+        }
+      ]
+    }
+  });
+}
+
+// ---------- SHARE PIE CHART ----------
+if (rawData.shared_per_user.length) {
+  new Chart(document.getElementById("shareChart"), {
+    type: "pie",
+    data: {
+      labels: rawData.shared_per_user.map(r => r.email ?? r[0]),
+      datasets: [{
+        data: rawData.shared_per_user.map(r => r.count ?? r[1])
+      }]
+    }
+  });
+}
+
+// ---------- STORAGE BAR CHART ----------
+if (rawData.storage_per_user.length) {
+  new Chart(document.getElementById("storageChart"), {
+    type: "bar",
+    data: {
+      labels: rawData.storage_per_user.map(r => r.email ?? r[0]),
+      datasets: [{
+        label: "Storage (MB)",
+        data: rawData.storage_per_user.map(r => r.mb ?? r[1])
+      }]
+    }
+  });
+}
+</script>
+
+{% endblock %}

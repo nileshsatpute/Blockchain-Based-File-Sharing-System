@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<nav class="user-nav">
+    <a href="{{ url_for('user.upload_page') }}">Upload</a> |
+    <a href="{{ url_for('user.my_files_page') }}">My Files</a> |
+    <a href="{{ url_for('user.shared_with_me_page') }}">Shared</a> |
+    <a href="{{ url_for('user.feedback_page') }}">Feedback</a> |
+    <a href="{{ url_for('user.chain_page') }}">Blockchain</a>
+</nav>
+
+<h2>My Files</h2>
+
+{% if my_files %}
+<table class="file-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>SHA256</th>
+            <th>Size (bytes)</th>
+            <th>Shared With</th>
+            <th>Grant Access</th>
+            <th>Revoke Access</th>
+            <th>Download</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for f in my_files %}
+        <tr>
+            <td>{{ f.id }}</td>
+            <td>{{ f.filename }}</td>
+            <td class="mono">{{ f.sha256[:10] }}...</td>
+            <td>{{ f.size_bytes }}</td>
+
+            <!-- Show list of active grantees -->
+            <td>
+                {% set active_grantees = [] %}
+                {% for p in f.permissions %}
+                {% if not p.revoked_at %}
+                {% set _ = active_grantees.append(p.grantee.email) %}
+                {% endif %}
+                {% endfor %}
+
+                {% if active_grantees %}
+                {% for email in active_grantees %}
+                <span class="grantee">{{ email }}</span><br>
+                {% endfor %}
+                {% else %}
+                <em>Not shared</em>
+                {% endif %}
+            </td>
+
+
+            <!-- Grant Access -->
+            <td>
+                <form method="post" action="{{ url_for('user.share', file_id=f.id) }}">
+                    <select name="user_id">
+                        {% for u in users %}
+                        <option value="{{ u.id }}">{{ u.email }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn small" type="submit">Grant</button>
+                </form>
+            </td>
+
+            <!-- Revoke Access -->
+            <td>
+                <form method="post" action="{{ url_for('user.revoke', file_id=f.id) }}">
+                    <select name="user_id">
+                        {% for u in users %}
+                        <option value="{{ u.id }}">{{ u.email }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn danger small" type="submit">Revoke</button>
+                </form>
+            </td>
+
+            <!-- Download -->
+            <td>
+                <a class="btn" href="{{ url_for('user.download', file_id=f.id) }}">Download</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>You haven’t uploaded any files yet.</p>
+{% endif %}
+
+<style>
+    .user-nav {
+        margin-bottom: 20px;
+        background: #2c3e50;
+        padding: 10px;
+        border-radius: 6px;
+    }
+
+    .user-nav a {
+        color: #ecf0f1;
+        margin: 0 10px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .user-nav a:hover {
+        text-decoration: underline;
+    }
+
+    .file-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    .file-table th,
+    .file-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+
+    .file-table th {
+        background: #34495e;
+        color: white;
+    }
+
+    .file-table tr:nth-child(even) {
+        background: #f9f9f9;
+    }
+
+    .file-table tr:hover {
+        background: #f1f1f1;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 5px 10px;
+        background: #3498db;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .btn.small {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+
+    .btn.danger {
+        background: #e74c3c;
+    }
+
+    .btn:hover {
+        opacity: 0.9;
+    }
+
+    .grantee {
+        background: #ecf0f1;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 13px;
+        display: inline-block;
+        margin: 2px 0;
+    }
+</style>
+
+{% endblock %}

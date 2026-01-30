@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% block content %}
+<nav class="user-nav">
+  <a href="{{ url_for('user.upload_page') }}">Upload</a> |
+  <a href="{{ url_for('user.my_files_page') }}">My Files</a> |
+  <a href="{{ url_for('user.shared_with_me_page') }}">Shared</a> |
+  <a href="{{ url_for('user.feedback_page') }}">Feedback</a> |
+  <a href="{{ url_for('user.chain_page') }}">Blockchain</a>
+</nav>
+
+<h2>My Blockchain Entries</h2>
+
+<table class="styled-table">
+  <thead>
+    <tr>
+      <th>Index</th>
+      <th>Timestamp</th>
+      <th>Hash</th>
+      <th>Data</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for b in blocks %}
+    <tr>
+      <td>{{ b.index }}</td>
+      <td>{{ b.timestamp }}</td>
+      <td class="mono">{{ b.block_hash }}</td>
+      <td>
+        <div class="data-preview">{{ b.data_json[:80] }}...</div>
+        <button class="btn small" onclick="showModal('modal-{{ b.id }}')">View</button>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- Render modals AFTER the table to avoid table-structure issues -->
+{% for b in blocks %}
+<div id="modal-{{ b.id }}" class="modal" aria-hidden="true">
+  <div class="modal-content" role="dialog" aria-modal="true" aria-label="Block {{ b.index }} Data">
+    <span class="close" onclick="closeModal('modal-{{ b.id }}')" aria-label="Close">&times;</span>
+    <h3>Block {{ b.index }} Data</h3>
+    <!-- Show JSON; if your data_json is a JSON string, this will show it as-is -->
+    <pre class="json-block">{{ b.data_json }}</pre>
+  </div>
+</div>
+{% endfor %}
+
+<style>
+.user-nav {
+  background: #2c3e50;
+  padding: 10px 12px;
+
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+.user-nav a {
+  color: #ecf0f1;
+  margin: 0 12px;
+  text-decoration: none;
+  font-weight: 500;
+}
+.user-nav a:hover { text-decoration: underline; }
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.styled-table th, .styled-table td {
+  border: 1px solid #eee;
+  padding: 10px 12px;
+  text-align: left;
+}
+.styled-table th {
+  background-color: #f7f7f7;
+  font-weight: 600;
+}
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 13px;
+  word-break: break-all;
+}
+.data-preview {
+  max-width: 320px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.btn.small {
+  padding: 4px 10px;
+  font-size: 12px;
+  margin-top: 6px;
+  border: none;
+  border-radius: 6px;
+  background: #2c3e50;
+  color: #fff;
+  cursor: pointer;
+}
+.btn.small:hover { opacity: 0.9; }
+
+/* Modal styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 50;
+  inset: 0;
+  background-color: rgba(0,0,0,0.6);
+  padding-top: 60px;
+}
+.modal-content {
+  background-color: #fff;
+  margin: auto;
+  padding: 18px;
+  border-radius: 10px;
+  width: 70%;
+  max-width: 900px;
+  max-height: 80%;
+  overflow-y: auto;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.close {
+  color: #555;
+  float: right;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.close:hover { color: #000; }
+.json-block {
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 13px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+</style>
+
+<script>
+function showModal(id) {
+  var el = document.getElementById(id);
+  if (el) el.style.display = 'block';
+}
+function closeModal(id) {
+  var el = document.getElementById(id);
+  if (el) el.style.display = 'none';
+}
+// close when clicking outside
+window.addEventListener('click', function (e) {
+  document.querySelectorAll('.modal').forEach(function(modal){
+    if (e.target === modal) modal.style.display = 'none';
+  });
+});
+</script>
+{% endblock %}

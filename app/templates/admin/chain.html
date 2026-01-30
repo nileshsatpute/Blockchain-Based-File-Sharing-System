@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .admin-nav {
+        margin-bottom: 20px;
+        background: #2c3e50;
+        padding: 10px;
+        border-radius: 6px;
+        display: flex;
+        justify-content: flex-start;
+    }
+    .admin-nav a {
+        color: #ecf0f1;
+        margin: 0 10px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .admin-nav a:hover {
+        text-decoration: underline;
+    }
+
+    .table-container {
+        overflow-x: auto;
+        margin-top: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 800px; /* ensure columns don’t squeeze */
+    }
+    table th, table td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+        vertical-align: top;
+    }
+    table th {
+        background: #34495e;
+        color: #fff;
+    }
+    table tr:nth-child(even) {
+        background: #f9f9f9;
+    }
+    .mono {
+        font-family: monospace;
+        font-size: 0.9em;
+        word-break: break-all; /* wrap long hashes */
+    }
+    .btn-small {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8em;
+    }
+    .btn-small:hover {
+        background: #2980b9;
+    }
+
+    /* Modal styling */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0; top: 0;
+        width: 100%; height: 100%;
+        overflow: auto;
+        background: rgba(0,0,0,0.6);
+    }
+    .modal-content {
+        background: #fff;
+        margin: 5% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 80%;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .close:hover {
+        color: black;
+    }
+    pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        background: #f4f4f4;
+        padding: 10px;
+        border-radius: 6px;
+    }
+</style>
+
+<nav class="admin-nav">
+    <a href="{{ url_for('admin.create_user_page') }}">Create User</a>
+    <a href="{{ url_for('admin.change_password_page') }}">Change Password</a>
+    <a href="{{ url_for('admin.all_files_page') }}">All Files</a>
+    <a href="{{ url_for('admin.feedback_page') }}">Feedback</a>
+    <a href="{{ url_for('admin.logs_page') }}">Logs</a>
+    <a href="{{ url_for('admin.chain_page') }}">Blockchain</a>
+    <a href="{{ url_for('admin.analytics_page') }}">Analytics</a>
+</nav>
+
+<h2>Blockchain (Recent Blocks)</h2>
+<div class="readme-block">{{ readme_html|safe }}</div>
+
+<div class="table-container">
+<table>
+    <tr>
+        <th>Index</th>
+        <th>Timestamp</th>
+        <th>Prev Hash</th>
+        <th>Hash</th>
+        <th>Data</th>
+        <th>Details</th>
+    </tr>
+    {% for b in blocks %}
+    <tr>
+        <td>{{ b.index }}</td>
+        <td>{{ b.timestamp }}</td>
+        <td class="mono">{{ b.prev_hash }}</td>
+        <td class="mono">{{ b.block_hash }}</td>
+        <td style="max-width:300px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">
+            {{ b.data_json[:200] }}...
+        </td>
+        <td>
+            <button class="btn-small" onclick="showModal('modal-{{ loop.index0 }}')">View</button>
+        </td>
+    </tr>
+
+    <!-- Modal -->
+    <div id="modal-{{ loop.index0 }}" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal-{{ loop.index0 }}')">&times;</span>
+            <h3>Block {{ b.index }}</h3>
+            <p><b>Timestamp:</b> {{ b.timestamp }}</p>
+            <p><b>Previous Hash:</b> {{ b.prev_hash }}</p>
+            <p><b>Hash:</b> {{ b.block_hash }}</p>
+            <p><b>Nonce:</b> {{ b.nonce }}</p>
+            <pre>{{ b.data_json }}</pre>
+        </div>
+    </div>
+    {% endfor %}
+</table>
+</div>
+
+<script>
+    function showModal(id) {
+        document.getElementById(id).style.display = "block";
+    }
+    function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+    }
+    window.onclick = function(event) {
+        document.querySelectorAll('.modal').forEach(function(modal) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+    }
+</script>
+{% endblock %}

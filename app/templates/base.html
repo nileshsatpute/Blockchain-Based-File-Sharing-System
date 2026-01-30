@@ -1,0 +1,13 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Blockchain File Share</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"></head><body>
+<header class="topbar"><h1>Blockchain File Share</h1><nav>
+  {% if current_user.is_authenticated %}
+    <span>Hi, {{ current_user.username or current_user.email }} ({{ current_user.role }})</span>
+    {% if current_user.role == 'ADMIN' %}<a href="{{ url_for('admin.create_user_page') }}">Admin Panel</a>{% else %}<a href="{{ url_for('user.upload_page') }}">User Panel</a>{% endif %}
+    <a href="{{ url_for('auth.logout') }}">Logout</a>
+  {% else %}
+    <a href="{{ url_for('auth.login') }}">User Login</a> | <a href="{{ url_for('auth.admin_login') }}">Admin Login</a>
+  {% endif %}
+</nav></header><main class="container">{% with messages = get_flashed_messages() %}{% if messages %}<ul class="flash">{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>{% endif %}{% endwith %}{% block content %}{% endblock %}</main>
+<footer class="footer"><small>&copy; 2025 Blockchain File Share</small></footer></body></html>

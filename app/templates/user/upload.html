@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    /* Navigation Bar */
+    .user-nav {
+        background: #2c3e50;
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+    }
+    .user-nav a {
+        color: #ecf0f1;
+        text-decoration: none;
+        margin: 0 12px;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+    .user-nav a:hover {
+        color: #1abc9c;
+    }
+
+    /* Upload Form */
+    .upload-container {
+        background: #f9f9f9;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        max-width: 500px;
+        margin: auto;
+    }
+    .upload-container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #34495e;
+    }
+    .upload-container label {
+        display: block;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    .upload-container input[type="file"],
+    .upload-container select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-bottom: 10px;
+    }
+    .upload-container select {
+        height: 120px;
+    }
+    .checkbox {
+        display: flex;
+        align-items: center;
+        margin: 12px 0;
+    }
+    .checkbox input {
+        margin-right: 8px;
+    }
+
+    /* Button */
+    .btn {
+        background: #1abc9c;
+        color: white;
+        padding: 10px 18px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        transition: background 0.2s;
+    }
+    .btn:hover {
+        background: #16a085;
+    }
+</style>
+
+<nav class="user-nav">
+    <a href="{{ url_for('user.upload_page') }}">Upload</a> |
+    <a href="{{ url_for('user.my_files_page') }}">My Files</a> |
+    <a href="{{ url_for('user.shared_with_me_page') }}">Shared</a> |
+    <a href="{{ url_for('user.feedback_page') }}">Feedback</a> |
+    <a href="{{ url_for('user.chain_page') }}">Blockchain</a>
+</nav>
+
+<div class="upload-container">
+    <h2>Upload File</h2>
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('user.upload') }}">
+        <label for="file">Select File</label>
+        <input type="file" id="file" name="file" required>
+
+        <label for="grantees">Share with (hold Ctrl to select multiple)</label>
+        <select name="grantees" id="grantees" multiple>
+            {% for u in users %}
+                <option value="{{ u.id }}">{{ u.email }}</option>
+            {% endfor %}
+        </select>
+
+        <label class="checkbox">
+            <input type="checkbox" name="mine_now"> Mine to Blockchain
+        </label>
+
+        <button class="btn" type="submit">Upload</button>
+    </form>
+</div>
+{% endblock %}
